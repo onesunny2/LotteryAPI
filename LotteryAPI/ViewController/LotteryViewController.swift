@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class LotteryViewController: UIViewController {
     
@@ -20,10 +21,15 @@ class LotteryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        for count in 0...6 {
+        view.backgroundColor = .white
+        
+        for _ in 0...6 {
             drawingNumsLabels.append(UILabel())
         }
        
+        configHierarchy()
+        configLayout()
+        configView()
     }
  
 }
@@ -35,7 +41,7 @@ extension LotteryViewController: LotteryResult {
         view.addSubview(lottoDateLabel)
         view.addSubview(resultLabel)
         view.addSubview(bonusLabel)
-        view.addSubview(lottoDrawPicker)
+//        view.addSubview(lottoDrawPicker)
         
         for index in 0...6 {
             view.addSubview(drawingNumsLabels[index])
@@ -43,11 +49,24 @@ extension LotteryViewController: LotteryResult {
     }
     
     func configLayout() {
-        <#code#>
+        lottoDrawTextfield.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
+            make.height.equalTo(50)
+        }
     }
     
     func configView() {
-        <#code#>
+        lottoDrawTextfield.borderStyle = .roundedRect
+        lottoDrawTextfield.layer.cornerRadius = 5
+        lottoDrawTextfield.clipsToBounds = true
+        lottoDrawTextfield.layer.borderColor = UIColor.systemGray6.cgColor
+        lottoDrawTextfield.layer.borderWidth = 2
+        lottoDrawTextfield.layer.backgroundColor = UIColor.clear.cgColor
+        lottoDrawTextfield.placeholder = "조회를 원하는 회차를 골라주세요 :)"
+        lottoDrawTextfield.textAlignment = .center
+        
+        bonusLabel.text = "sdsddddd"
     }
     
     

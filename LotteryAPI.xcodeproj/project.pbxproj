@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4350DF572D36404300670D84 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4350DF562D36404300670D84 /* SnapKit */; };
+		4350DF5A2D36405600670D84 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4350DF592D36405600670D84 /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		4350DF142D36398400670D84 /* LotteryAPI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LotteryAPI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4350DF572D36404300670D84 /* SnapKit in Frameworks */,
+				4350DF5A2D36405600670D84 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,8 @@
 			);
 			name = LotteryAPI;
 			packageProductDependencies = (
+				4350DF562D36404300670D84 /* SnapKit */,
+				4350DF592D36405600670D84 /* Alamofire */,
 			);
 			productName = LotteryAPI;
 			productReference = 4350DF142D36398400670D84 /* LotteryAPI.app */;
@@ -107,6 +116,10 @@
 			);
 			mainGroup = 4350DF0B2D36398400670D84;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4350DF552D36404300670D84 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				4350DF582D36405600670D84 /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4350DF152D36398400670D84 /* Products */;
 			projectDirPath = "";
@@ -150,7 +163,6 @@
 				INFOPLIST_FILE = LotteryAPI/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -183,7 +195,6 @@
 				INFOPLIST_FILE = LotteryAPI/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -345,6 +356,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4350DF552D36404300670D84 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		4350DF582D36405600670D84 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4350DF562D36404300670D84 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4350DF552D36404300670D84 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		4350DF592D36405600670D84 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4350DF582D36405600670D84 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4350DF0C2D36398400670D84 /* Project object */;
 }
