@@ -30,7 +30,16 @@ class LotteryViewController: UIViewController {
 
 extension LotteryViewController: LotteryResult {
     func configHierarchy() {
-        <#code#>
+        view.addSubview(lottoDrawTextfield)
+        view.addSubview(subtitleLabel)
+        view.addSubview(lottoDateLabel)
+        view.addSubview(resultLabel)
+        view.addSubview(bonusLabel)
+        view.addSubview(lottoDrawPicker)
+        
+        for index in 0...6 {
+            view.addSubview(drawingNumsLabels[index])
+        }
     }
     
     func configLayout() {
