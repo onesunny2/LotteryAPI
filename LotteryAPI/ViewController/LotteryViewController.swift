@@ -108,7 +108,7 @@ extension LotteryViewController: LotteryResult {
         let title = currentDraw + " 당첨결과"
         let attributedString = NSMutableAttributedString(string: title)
         let stringLength = attributedString.length
-        attributedString.addAttributes([.foregroundColor: UIColor.orange, .font: UIFont.systemFont(ofSize: 30, weight: .semibold)],range: NSRange(location: 0, length: currentDraw.count))
+        attributedString.addAttributes([.foregroundColor: UIColor.lottoYellow, .font: UIFont.systemFont(ofSize: 30, weight: .semibold)],range: NSRange(location: 0, length: currentDraw.count))
         attributedString.addAttributes([.foregroundColor: UIColor.label, .font: UIFont.systemFont(ofSize: 30, weight: .medium)], range: NSRange(location: currentDraw.count, length: stringLength - currentDraw.count))
         resultLabel.attributedText = attributedString
     }
