@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Alamofire
 
 class LotteryViewController: UIViewController {
     
@@ -38,6 +39,7 @@ class LotteryViewController: UIViewController {
         
         view.backgroundColor = .white
         currentDraw = "1154회"
+        getAPIInfo("1154")
         
         configPicker()
         
@@ -58,7 +60,32 @@ class LotteryViewController: UIViewController {
             $0.layer.cornerRadius = $0.frame.width / 2
         }
     }
- 
+
+    func getAPIInfo(_ drwNo: String) {
+        let url = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=\(drwNo)"
+        
+        AF.request(url, method: .get).responseDecodable(of: Lottery.self) { response in
+            
+            switch response.result {
+            case .success(let value):
+                self.drawNumber[0] = String(value.drwtNo1)
+                self.drawNumber[1] = String(value.drwtNo2)
+                self.drawNumber[2] = String(value.drwtNo3)
+                self.drawNumber[3] = String(value.drwtNo4)
+                self.drawNumber[4] = String(value.drwtNo5)
+                self.drawNumber[5] = String(value.drwtNo6)
+                self.drawNumber[7] = String(value.bnusNo)
+                
+                self.reloadDrawNumbers()
+                
+                self.lottoDateLabel.text = "\(value.drwNoDate) 추첨"
+                
+            case .failure(let value):
+                print(value
+                )
+            }
+        }
+    }
 }
 
 // MARK: - pickerView 설정
@@ -94,6 +121,8 @@ extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         lottoDrawTextfield.text = title
         currentDraw = "\(title)회"
         resultLabel.attributedText = resultTitle()
+        
+        getAPIInfo(title)
     }
     
 }
@@ -192,6 +221,24 @@ extension LotteryViewController: LotteryResult {
     
         resultLabel.attributedText = resultTitle()
         
+        reloadDrawNumbers()
+        
+        bonusLabel.text = "보너스"
+        bonusLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        bonusLabel.textColor = .gray
+    }
+    
+    func resultTitle() -> NSAttributedString {
+        let title = currentDraw + " 당첨결과"
+        let attributedString = NSMutableAttributedString(string: title)
+        let stringLength = attributedString.length
+        attributedString.addAttributes([.foregroundColor: UIColor.lottoYellow, .font: UIFont.systemFont(ofSize: 30, weight: .semibold)],range: NSRange(location: 0, length: currentDraw.count))
+        attributedString.addAttributes([.foregroundColor: UIColor.label, .font: UIFont.systemFont(ofSize: 30, weight: .medium)], range: NSRange(location: currentDraw.count, length: stringLength - currentDraw.count))
+        
+        return attributedString
+    }
+    
+    func reloadDrawNumbers() {
         for index in 0...7 {
             drawingNumsLabels[index].text = drawNumber[index]
             drawingNumsLabels[index].textColor = .white
@@ -203,7 +250,6 @@ extension LotteryViewController: LotteryResult {
         drawingNumsLabels[6].textColor = .black
         drawingNumsLabels[6].textAlignment = .center
         drawingNumsLabels[6].font = .systemFont(ofSize: 20, weight: .semibold)
-        
         
         for index in 0...7 {
             drawingNumsViews[index].clipsToBounds = true
@@ -226,19 +272,5 @@ extension LotteryViewController: LotteryResult {
                 }
             }
         }
-        
-        bonusLabel.text = "보너스"
-        bonusLabel.font = .systemFont(ofSize: 13, weight: .medium)
-        bonusLabel.textColor = .gray
-    }
-    
-    func resultTitle() -> NSAttributedString {
-        let title = currentDraw + " 당첨결과"
-        let attributedString = NSMutableAttributedString(string: title)
-        let stringLength = attributedString.length
-        attributedString.addAttributes([.foregroundColor: UIColor.lottoYellow, .font: UIFont.systemFont(ofSize: 30, weight: .semibold)],range: NSRange(location: 0, length: currentDraw.count))
-        attributedString.addAttributes([.foregroundColor: UIColor.label, .font: UIFont.systemFont(ofSize: 30, weight: .medium)], range: NSRange(location: currentDraw.count, length: stringLength - currentDraw.count))
-        
-        return attributedString
     }
 }
