@@ -190,10 +190,11 @@ extension LotteryViewController: LotteryResult {
         
         // 🥺🥺🥺 보너스 label 바로 위 stackView로 여백을 잡으면 스택뷰가 원형이 깨져요... 해결하지 못해서 정말 이유가 궁금합니다 ㅠㅠ 구글링도 실패했어요...
         // 아주 신기하게도 stackView 기준이 아니라 다른 객체를 기준으로 여백을 잡아도 cornerRadius가 폴립니다..
-        /* bonusLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(view.safeAreaLayoutGuide).inset(24)
+        // + ) 퇴근 전 9시 40분경 다른 작업 다 하고 혹시나 해서 주석 풀고 실행해봤더니 정상작동 됩니다(?) 대체 무슨 영향으로 네모네모 였던 것이었는지 귀신이 들렸었나봐요..?
+        bonusLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(view.safeAreaLayoutGuide).inset(27)
             make.top.equalTo(drawStackView.snp.bottom).offset(4)
-        } */
+        }
         
     }
     
