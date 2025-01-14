@@ -29,7 +29,7 @@ class LotteryViewController: UIViewController {
         return stackview
     }()
     
-    var currentDraw: String = "913회"
+    var currentDraw: String = ""
     var drawNumber: [String] = ["11", "22", "33", "44", "5", "6", "+", "13"]
     var countArray = Array(1...1154)
 
@@ -37,11 +37,9 @@ class LotteryViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        currentDraw = "1154회"
         
-        lottoDrawTextfield.inputView = lottoDrawPicker
-        
-        lottoDrawPicker.delegate = self
-        lottoDrawPicker.dataSource = self
+        configPicker()
         
         for _ in 0...7 {
             drawingNumsLabels.append(UILabel())
@@ -65,6 +63,15 @@ class LotteryViewController: UIViewController {
 
 // MARK: - pickerView 설정
 extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    func configPicker() {
+        lottoDrawTextfield.inputView = lottoDrawPicker
+        
+        lottoDrawPicker.delegate = self
+        lottoDrawPicker.dataSource = self
+        lottoDrawPicker.selectedRow(inComponent: 0)
+    }
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -80,6 +87,15 @@ extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         return title
     }
     
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        
+        let title = String(countArray.reversed()[row])
+        
+        lottoDrawTextfield.text = title
+        currentDraw = "\(title)회"
+        resultLabel.attributedText = resultTitle()
+    }
+    
 }
 
 // MARK: - 레이아웃 및 속성 설정
@@ -92,7 +108,6 @@ extension LotteryViewController: LotteryResult {
         view.addSubview(resultLabel)
         view.addSubview(bonusLabel)
         view.addSubview(underlineUIView)
-//        view.addSubview(lottoDrawPicker)
         
         view.addSubview(drawStackView)
         for index in 0...7 {
@@ -174,14 +189,8 @@ extension LotteryViewController: LotteryResult {
         lottoDateLabel.textAlignment = .right
         
         underlineUIView.backgroundColor = .systemGray6
-        
-
-        let title = currentDraw + " 당첨결과"
-        let attributedString = NSMutableAttributedString(string: title)
-        let stringLength = attributedString.length
-        attributedString.addAttributes([.foregroundColor: UIColor.lottoYellow, .font: UIFont.systemFont(ofSize: 30, weight: .semibold)],range: NSRange(location: 0, length: currentDraw.count))
-        attributedString.addAttributes([.foregroundColor: UIColor.label, .font: UIFont.systemFont(ofSize: 30, weight: .medium)], range: NSRange(location: currentDraw.count, length: stringLength - currentDraw.count))
-        resultLabel.attributedText = attributedString
+    
+        resultLabel.attributedText = resultTitle()
         
         for index in 0...7 {
             drawingNumsLabels[index].text = drawNumber[index]
@@ -221,5 +230,15 @@ extension LotteryViewController: LotteryResult {
         bonusLabel.text = "보너스"
         bonusLabel.font = .systemFont(ofSize: 13, weight: .medium)
         bonusLabel.textColor = .gray
+    }
+    
+    func resultTitle() -> NSAttributedString {
+        let title = currentDraw + " 당첨결과"
+        let attributedString = NSMutableAttributedString(string: title)
+        let stringLength = attributedString.length
+        attributedString.addAttributes([.foregroundColor: UIColor.lottoYellow, .font: UIFont.systemFont(ofSize: 30, weight: .semibold)],range: NSRange(location: 0, length: currentDraw.count))
+        attributedString.addAttributes([.foregroundColor: UIColor.label, .font: UIFont.systemFont(ofSize: 30, weight: .medium)], range: NSRange(location: currentDraw.count, length: stringLength - currentDraw.count))
+        
+        return attributedString
     }
 }
