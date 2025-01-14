@@ -30,7 +30,7 @@ class LotteryViewController: UIViewController {
     }()
     
     var currentDraw: String = "913회"
-    var drawNumber: [String] = ["11", "22", "33", "44", "5", "6", "+", "7"]
+    var drawNumber: [String] = ["11", "22", "33", "44", "5", "6", "+", "13"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -173,11 +173,25 @@ extension LotteryViewController: LotteryResult {
         
         for index in 0...7 {
             drawingNumsViews[index].clipsToBounds = true
-            drawingNumsViews[index].backgroundColor = .lottoRed
+            
+            if let number = Int(drawNumber[index]) {
+                
+                switch number {
+                case 1...10:
+                    drawingNumsViews[index].backgroundColor = .lottoYellow
+                case 11...20:
+                    drawingNumsViews[index].backgroundColor = .lottoBlue
+                case 21...30:
+                    drawingNumsViews[index].backgroundColor = .lottoRed
+                case 31...40:
+                    drawingNumsViews[index].backgroundColor = .lottoGray
+                case 41...45:
+                    drawingNumsViews[index].backgroundColor = .lottoGreen
+                default:
+                    drawingNumsViews[index].backgroundColor = .clear
+                }
+            }
         }
-        
-        drawingNumsViews[6].clipsToBounds = true
-        drawingNumsViews[6].backgroundColor = .clear
         
         bonusLabel.text = "보너스"
         bonusLabel.font = .systemFont(ofSize: 13, weight: .medium)
