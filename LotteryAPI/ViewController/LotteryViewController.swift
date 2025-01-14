@@ -31,11 +31,17 @@ class LotteryViewController: UIViewController {
     
     var currentDraw: String = "913회"
     var drawNumber: [String] = ["11", "22", "33", "44", "5", "6", "+", "13"]
+    var countArray = Array(1...1154)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        
+        lottoDrawTextfield.inputView = lottoDrawPicker
+        
+        lottoDrawPicker.delegate = self
+        lottoDrawPicker.dataSource = self
         
         for _ in 0...7 {
             drawingNumsLabels.append(UILabel())
@@ -55,6 +61,25 @@ class LotteryViewController: UIViewController {
         }
     }
  
+}
+
+// MARK: - pickerView 설정
+extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return countArray.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
+        let title = String(countArray.reversed()[row])
+        
+        return title
+    }
+    
 }
 
 // MARK: - 레이아웃 및 속성 설정
