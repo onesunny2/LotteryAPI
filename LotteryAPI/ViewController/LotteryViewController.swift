@@ -73,13 +73,8 @@ class LotteryViewController: UIViewController {
             
             switch response.result {
             case .success(let value):
-                self.drawNumber[0] = String(value.drwtNo1)
-                self.drawNumber[1] = String(value.drwtNo2)
-                self.drawNumber[2] = String(value.drwtNo3)
-                self.drawNumber[3] = String(value.drwtNo4)
-                self.drawNumber[4] = String(value.drwtNo5)
-                self.drawNumber[5] = String(value.drwtNo6)
-                self.drawNumber[7] = String(value.bnusNo)
+                
+                self.drawNumber = value.lotteryList
                 
                 self.reloadDrawNumbers()
                 
