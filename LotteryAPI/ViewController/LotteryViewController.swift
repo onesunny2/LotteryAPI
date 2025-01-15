@@ -76,6 +76,10 @@ class LotteryViewController: UIViewController {
                 
                 self.drawNumber = value.lotteryList
                 
+                for index in 0...7 {
+                    self.drawingNumsLabels[index].text = self.drawNumber[index]
+                }
+                
                 self.reloadDrawNumbers()
                 
                 self.lottoDateLabel.text = "\(value.drwNoDate) 추첨"
@@ -232,6 +236,8 @@ extension LotteryViewController: LotteryResult {
     
         resultLabel.attributedText = resultTitle()
         
+        configDrawNumsLabels()
+        
         reloadDrawNumbers()
         
         bonusLabel.text = "보너스"
@@ -249,7 +255,7 @@ extension LotteryViewController: LotteryResult {
         return attributedString
     }
     
-    func reloadDrawNumbers() {
+    func configDrawNumsLabels() {
         for index in 0...7 {
             drawingNumsLabels[index].text = drawNumber[index]
             drawingNumsLabels[index].textColor = .white
@@ -261,6 +267,9 @@ extension LotteryViewController: LotteryResult {
         drawingNumsLabels[6].textColor = .black
         drawingNumsLabels[6].textAlignment = .center
         drawingNumsLabels[6].font = .systemFont(ofSize: 20, weight: .semibold)
+    }
+    
+    func reloadDrawNumbers() {
         
         for index in 0...7 {
             drawingNumsViews[index].clipsToBounds = true
