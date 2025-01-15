@@ -9,6 +9,9 @@ import UIKit
 import SnapKit
 import Alamofire
 
+// 🥺🥺🥺 어떤 때는 로또 공이 시작점부터 원형이고 어떤 때는 네모로 나오는데 뭔가 초기화 시점에 문제가 있는걸까요?
+// 네모로 빌드 시작되어도 회차 바꾸면 다시 원형이 되어서..
+
 class LotteryViewController: UIViewController {
     
     let lottoDrawTextfield = UITextField()
@@ -32,7 +35,7 @@ class LotteryViewController: UIViewController {
     
     var currentDraw: String = ""
     var drawNumber: [String] = ["11", "22", "33", "44", "5", "6", "+", "13"]
-    var countArray = Array(1...1154)
+    var countArray: [Int] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +54,8 @@ class LotteryViewController: UIViewController {
         configHierarchy()
         configLayout()
         configView()
+        
+        countArray = Array(1...caculateDate())
     }
     
     override func viewDidLayoutSubviews() {
@@ -86,6 +91,19 @@ class LotteryViewController: UIViewController {
             }
         }
     }
+    
+    func caculateDate() -> Int {
+        let firstDate = DateComponents(year: 2002, month: 12, day: 07)
+        let startDate = Calendar.current.date(from: firstDate)!
+        
+        let offsetComps = Calendar.current.dateComponents([.day], from: startDate, to: Date())
+        
+        guard let days = offsetComps.day else { return 0 }
+        let drw = ( days / 7 ) + 1
+        
+        return drw
+    }
+ 
 }
 
 // MARK: - pickerView 설정
@@ -188,9 +206,6 @@ extension LotteryViewController: LotteryResult {
             }
         }
         
-        // 🥺🥺🥺 보너스 label 바로 위 stackView로 여백을 잡으면 스택뷰가 원형이 깨져요... 해결하지 못해서 정말 이유가 궁금합니다 ㅠㅠ 구글링도 실패했어요...
-        // 아주 신기하게도 stackView 기준이 아니라 다른 객체를 기준으로 여백을 잡아도 cornerRadius가 폴립니다..
-        // + ) 퇴근 전 9시 40분경 다른 작업 다 하고 혹시나 해서 주석 풀고 실행해봤더니 정상작동 됩니다(?) 대체 무슨 영향으로 네모네모 였던 것이었는지 귀신이 들렸었나봐요..?
         bonusLabel.snp.makeConstraints { make in
             make.trailing.equalTo(view.safeAreaLayoutGuide).inset(27)
             make.top.equalTo(drawStackView.snp.bottom).offset(4)
