@@ -80,7 +80,7 @@ class LotteryViewController: UIViewController {
                     self.drawingNumsLabels[index].text = self.drawNumber[index]
                 }
                 
-                self.reloadDrawNumbers()
+                self.reloadBallColors()
                 
                 self.lottoDateLabel.text = "\(value.drwNoDate) 추첨"
                 
@@ -238,7 +238,7 @@ extension LotteryViewController: LotteryResult {
         
         configDrawNumsLabels()
         
-        reloadDrawNumbers()
+        reloadBallColors()
         
         bonusLabel.text = "보너스"
         bonusLabel.font = .systemFont(ofSize: 13, weight: .medium)
@@ -261,6 +261,8 @@ extension LotteryViewController: LotteryResult {
             drawingNumsLabels[index].textColor = .white
             drawingNumsLabels[index].textAlignment = .center
             drawingNumsLabels[index].font = .systemFont(ofSize: 20, weight: .semibold)
+            
+            drawingNumsViews[index].clipsToBounds = true
         }
         
         drawingNumsLabels[6].text = drawNumber[6]
@@ -269,11 +271,10 @@ extension LotteryViewController: LotteryResult {
         drawingNumsLabels[6].font = .systemFont(ofSize: 20, weight: .semibold)
     }
     
-    func reloadDrawNumbers() {
+    func reloadBallColors() {
         
         for index in 0...7 {
-            drawingNumsViews[index].clipsToBounds = true
-            
+ 
             if let number = Int(drawNumber[index]) {
                 
                 switch number {
