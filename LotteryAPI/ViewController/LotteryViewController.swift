@@ -31,9 +31,16 @@ final class LotteryViewController: UIViewController {
         currentDraw = "1154회"
 //        getAPIInfo("1154")
         
-        NetworkManager.shared.callRequest(type: Lottery.self, url: .lotto(drwNo: 1158))
+        NetworkManager.shared.callObservableRequest(type: Lottery.self, url: .lotto(drwNo: 1158))
             .bind(with: self) { owner, result in
                 dump(result)
+            }
+            .disposed(by: disposeBag)
+        
+        NetworkManager.shared.callSingleRequest(type: Lottery.self, url: .lotto(drwNo: 1155))
+            .asObservable()
+            .subscribe(with: self) { owner, value in
+                dump(value)
             }
             .disposed(by: disposeBag)
         
