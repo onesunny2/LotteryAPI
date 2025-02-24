@@ -14,21 +14,28 @@ final class LotteryViewModel: BaseViewModel {
     struct Input {
         // viewdidLoad -> 가장 최근회차
         let callRequest: Observable<()>
+        let pickerIndexpath: ControlEvent<(row: Int, component: Int)>
+        let pickerTitle: ControlEvent<[Int]>
     }
     
     struct Output {
         let lotteryList: PublishRelay<[String]>
         let drwNoDate: PublishRelay<String>
         let drwNo: PublishRelay<Int>
+        let totalLotto: BehaviorRelay<[Int]>
+        let selectedDrawNo: PublishRelay<String>
     }
     
     var disposeBag: DisposeBag = DisposeBag()
+    lazy var totalLotto: [Int] = Array(1...recentLottoCount())
     
     func transform(input: Input) -> Output {
         
         let lotteryList = PublishRelay<[String]>()
         let drwNoDate = PublishRelay<String>()
         let drwNo = PublishRelay<Int>()
+        let totalLotto = BehaviorRelay(value: totalLotto)
+        let selectedDrawNo = PublishRelay<String>()
         
         input.callRequest
             .debug()
@@ -45,16 +52,30 @@ final class LotteryViewModel: BaseViewModel {
             }
             .disposed(by: disposeBag)
         
+        Observable.zip(
+            input.pickerIndexpath,
+            input.pickerTitle
+        )
+        .bind(with: self) { owner, value in
+            let titleList = value.1
+            let selectedTitle = titleList[value.0.component]
+            
+            selectedDrawNo.accept(String(selectedTitle))
+        }
+        .disposed(by: disposeBag)
+        
         return Output(
             lotteryList: lotteryList,
             drwNoDate: drwNoDate,
-            drwNo: drwNo
+            drwNo: drwNo,
+            totalLotto: totalLotto,
+            selectedDrawNo: selectedDrawNo
         )
     }
     
     
     // MARK: 가장 최근 회차 구하기
-    private func recentLottoCount() -> Int {
+    func recentLottoCount() -> Int {
         
         let firstDate = DateComponents(year: 2002, month: 12, day: 07)
         let startDate = Calendar.current.date(from: firstDate)

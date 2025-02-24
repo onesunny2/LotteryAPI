@@ -16,11 +16,7 @@ final class LotteryViewController: UIViewController {
     private let mainView = LotteryView()
     private let viewModel = LotteryViewModel()
     private let disposeBag = DisposeBag()
- 
-    var currentDraw: String = ""
-    var drawNumber: [String] = ["11", "22", "33", "44", "5", "6", "+", "13"]
-    var countArray: [Int] = []
-    
+
     override func loadView() {
         view = mainView
     }
@@ -41,10 +37,26 @@ final class LotteryViewController: UIViewController {
     
     private func bind() {
         
-        let input = LotteryViewModel.Input(callRequest: Observable.just(()))
+        let input = LotteryViewModel.Input(
+            callRequest: Observable.just(()),
+            pickerIndexpath: mainView.lottoDrawPicker.rx.itemSelected,
+            pickerTitle: mainView.lottoDrawPicker.rx.modelSelected(Int.self)
+        )
         let output = viewModel.transform(input: input)
         
+        output.totalLotto
+            .map { Array($0.reversed()) }
+            .bind(to: mainView.lottoDrawPicker.rx.itemTitles) { _, item in
+                return "\(item)"
+            }
+            .disposed(by: disposeBag)
         
+        output.selectedDrawNo
+        .bind(with: self) { owner, num in
+            owner.mainView.lottoDrawTextfield.text = num
+        }
+        .disposed(by: disposeBag)
+
         output.lotteryList
             .bind(with: self) { owner, list in
                 
@@ -62,43 +74,22 @@ final class LotteryViewController: UIViewController {
             .bind(to: mainView.lottoDateLabel.rx.text)
             .disposed(by: disposeBag)
         
-        
-        // TODO: .withUnretained(self) 쓰면 오류나는 이유
         output.drwNo
             .map { String($0) }
-            .map { self.resultTitle($0) }
-            .bind(to: mainView.resultLabel.rx.attributedText)
+            .bind(with: self) { owner, num in
+                owner.mainView.resultLabel.attributedText = owner.resultTitle(num)
+                owner.mainView.lottoDrawTextfield.text = num
+            }
             .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - pickerView 설정
-extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return countArray.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         
-        let title = String(countArray.reversed()[row])
         
-        return title
+        // TODO: .withUnretained(self) 쓰면 오류나는 이유?
+//        output.drwNo
+//            .map { String($0) }
+//            .map { self.resultTitle($0) }
+//            .bind(to: mainView.resultLabel.rx.attributedText)
+//            .disposed(by: disposeBag)
     }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        
-        let title = String(countArray.reversed()[row])
-        
-        mainView.lottoDrawTextfield.text = title
-        currentDraw = "\(title)회"
-//        mainView.resultLabel.attributedText = resultTitle()
-    }
-    
 }
 
 // MARK: - 레이아웃 및 속성 설정
