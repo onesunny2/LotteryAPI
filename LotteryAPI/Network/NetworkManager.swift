@@ -14,40 +14,50 @@ final class NetworkManager {
     static let shared = NetworkManager()
     private init() {}
     
-    func callRequest<T: Decodable>(type: T.Type, url: API, completionHandler: @escaping (Result<T, APIError>) -> ()) {
+    func callRequest<T: Decodable>(type: T.Type, url: API) -> Observable<T> {
         
-        guard let urlString = URL(string: url.url) else {
-            completionHandler(.failure(.invalidURL))
-            return
-        }
-        
-        URLSession.shared.dataTask(with: urlString) { data, response, error in
+        return Observable<T>.create { value in
             
-            if let error = error {
-                completionHandler(.failure(.unknownResponse))
-                return
-            }
-            
-            guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else {
-                completionHandler(.failure(.unknownResponse))
-                return
-            }
-            
-            if let data = data {
-                
-                do {
-                    let result = try JSONDecoder().decode(T.self, from: data)
-                    completionHandler(.success(result))
-                    
-                } catch {
-                    completionHandler(.failure(.unknownResponse))
+            guard let urlString = URL(string: url.url) else {
+                value.onError(APIError.invalidURL)
+                return Disposables.create {
+                    print("disposed")
                 }
-            } else {
-                completionHandler(.failure(.unknownResponse))
+            }
+            
+            URLSession.shared.dataTask(with: urlString) { data, response, error in
+                
+                if let error = error {
+                    value.onError(APIError.unknownResponse)
+                    return
+                }
+                
+                guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else {
+                    value.onError(APIError.unknownResponse)
+                    return
+                }
+                
+                if let data = data {
+                    
+                    do {
+                        let result = try JSONDecoder().decode(T.self, from: data)
+                        
+                        value.onNext(result)
+                        value.onCompleted()
+                        
+                    } catch {
+                        value.onError(APIError.unknownResponse)
+                    }
+                } else {
+                    value.onError(APIError.unknownResponse)
+                }
+            }
+            .resume()
+            
+            return Disposables.create {
+                print("disposed")
             }
         }
-        .resume()
-        
     }
 }
 

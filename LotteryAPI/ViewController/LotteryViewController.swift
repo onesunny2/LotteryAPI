@@ -14,6 +14,7 @@ import RxSwift
 final class LotteryViewController: UIViewController {
     
     private let mainView = LotteryView()
+    private let disposeBag = DisposeBag()
  
     var currentDraw: String = ""
     var drawNumber: [String] = ["11", "22", "33", "44", "5", "6", "+", "13"]
@@ -30,14 +31,11 @@ final class LotteryViewController: UIViewController {
         currentDraw = "1154회"
 //        getAPIInfo("1154")
         
-        NetworkManager.shared.callRequest(type: Lottery.self, url: .lotto(drwNo: 1157)) { result in
-            switch result {
-            case .success(let success):
-                dump(success)
-            case .failure(let failure):
-                print(failure)
+        NetworkManager.shared.callRequest(type: Lottery.self, url: .lotto(drwNo: 1158))
+            .bind(with: self) { owner, result in
+                dump(result)
             }
-        }
+            .disposed(by: disposeBag)
         
         configPicker()
 
