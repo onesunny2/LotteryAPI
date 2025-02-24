@@ -16,6 +16,9 @@ final class LotteryViewModel: BaseViewModel {
         let callRequest: Observable<()>
         let pickerIndexpath: ControlEvent<(row: Int, component: Int)>
         let pickerTitle: ControlEvent<[Int]>
+        let tappedObservableBtn: ControlEvent<Void>
+        let tappedSingleBtn: ControlEvent<Void>
+        let currentTextfieldValue: ControlProperty<String>
     }
     
     struct Output {
@@ -63,6 +66,45 @@ final class LotteryViewModel: BaseViewModel {
             selectedDrawNo.accept(String(selectedTitle))
         }
         .disposed(by: disposeBag)
+        
+        input.tappedObservableBtn
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .withLatestFrom(input.currentTextfieldValue)
+            .map {
+                guard let num = Int($0) else {
+                    return self.recentLottoCount()
+                }
+                return num
+            }
+            .flatMap {
+                NetworkManager.shared.callObservableRequest(type: Lottery.self, url: .lotto(drwNo: $0))
+            }
+            .subscribe(with: self) { owner, result in
+                lotteryList.accept(result.lotteryList)
+                drwNoDate.accept(result.drwNoDate)
+                drwNo.accept(result.drwNo)
+            }
+            .disposed(by: disposeBag)
+        
+        input.tappedSingleBtn
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .withLatestFrom(input.currentTextfieldValue)
+            .map {
+                guard let num = Int($0) else {
+                    return self.recentLottoCount()
+                }
+                return num
+            }
+            .flatMap {
+                NetworkManager.shared.callSingleRequest(type: Lottery.self, url: .lotto(drwNo: $0))
+            }
+            .subscribe(with: self) { owner, result in
+                lotteryList.accept(result.lotteryList)
+                drwNoDate.accept(result.drwNoDate)
+                drwNo.accept(result.drwNo)
+            }
+            .disposed(by: disposeBag)
+            
         
         return Output(
             lotteryList: lotteryList,

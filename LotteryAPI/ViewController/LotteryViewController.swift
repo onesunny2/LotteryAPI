@@ -40,10 +40,13 @@ final class LotteryViewController: UIViewController {
         let input = LotteryViewModel.Input(
             callRequest: Observable.just(()),
             pickerIndexpath: mainView.lottoDrawPicker.rx.itemSelected,
-            pickerTitle: mainView.lottoDrawPicker.rx.modelSelected(Int.self)
+            pickerTitle: mainView.lottoDrawPicker.rx.modelSelected(Int.self),
+            tappedObservableBtn: mainView.observableButton.rx.tap,
+            tappedSingleBtn: mainView.singleButton.rx.tap,
+            currentTextfieldValue: mainView.lottoDrawTextfield.rx.text.orEmpty
         )
         let output = viewModel.transform(input: input)
-        
+
         output.totalLotto
             .map { Array($0.reversed()) }
             .bind(to: mainView.lottoDrawPicker.rx.itemTitles) { _, item in
