@@ -14,6 +14,7 @@ import RxSwift
 final class LotteryViewController: UIViewController {
     
     private let mainView = LotteryView()
+    private let viewModel = LotteryViewModel()
     private let disposeBag = DisposeBag()
  
     var currentDraw: String = ""
@@ -28,25 +29,8 @@ final class LotteryViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        currentDraw = "1154회"
-//        getAPIInfo("1154")
-        
-        NetworkManager.shared.callObservableRequest(type: Lottery.self, url: .lotto(drwNo: 1158))
-            .bind(with: self) { owner, result in
-                dump(result)
-            }
-            .disposed(by: disposeBag)
-        
-        NetworkManager.shared.callSingleRequest(type: Lottery.self, url: .lotto(drwNo: 1155))
-            .asObservable()
-            .subscribe(with: self) { owner, value in
-                dump(value)
-            }
-            .disposed(by: disposeBag)
-        
-        configPicker()
 
-        countArray = Array(1...caculateDate())
+        bind()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -54,53 +38,42 @@ final class LotteryViewController: UIViewController {
         
         view.endEditing(true)
     }
-
-    func getAPIInfo(_ drwNo: String) {
-        let url = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=\(drwNo)"
+    
+    private func bind() {
         
-        AF.request(url, method: .get).responseDecodable(of: Lottery.self) { response in
-            
-            switch response.result {
-            case .success(let value):
+        let input = LotteryViewModel.Input(callRequest: Observable.just(()))
+        let output = viewModel.transform(input: input)
+        
+        
+        output.lotteryList
+            .bind(with: self) { owner, list in
                 
-                self.drawNumber = value.lotteryList
-                
-                for index in 0...7 {
-                    self.mainView.drawingNumsLabels[index].text = self.drawNumber[index]
+                list.enumerated().forEach { index, element in
+                    owner.mainView.drawingNumsLabels[index].text = element
                 }
                 
-                self.reloadBallColors()
-                
-                self.mainView.lottoDateLabel.text = "\(value.drwNoDate) 추첨"
-                
-            case .failure(let value):
-                print(value
-                )
+                owner.configDrawNumsLabels(list)
+                owner.reloadBallColors(list)
             }
-        }
+            .disposed(by: disposeBag)
+            
+        output.drwNoDate
+            .map { "\($0) 추첨"}
+            .bind(to: mainView.lottoDateLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        
+        // TODO: .withUnretained(self) 쓰면 오류나는 이유
+        output.drwNo
+            .map { String($0) }
+            .map { self.resultTitle($0) }
+            .bind(to: mainView.resultLabel.rx.attributedText)
+            .disposed(by: disposeBag)
     }
-    
-    func caculateDate() -> Int {
-        let firstDate = DateComponents(year: 2002, month: 12, day: 07)
-        let startDate = Calendar.current.date(from: firstDate)!
-        
-        let offsetComps = Calendar.current.dateComponents([.day], from: startDate, to: Date())
-        
-        guard let days = offsetComps.day else { return 0 }
-        let drw = ( days / 7 ) + 1
-        
-        return drw
-    }
- 
 }
 
 // MARK: - pickerView 설정
 extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    
-    func configPicker() {
-        mainView.lottoDrawPicker.delegate = self
-        mainView.lottoDrawPicker.dataSource = self
-    }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -123,9 +96,7 @@ extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         
         mainView.lottoDrawTextfield.text = title
         currentDraw = "\(title)회"
-        mainView.resultLabel.attributedText = resultTitle()
-        
-        getAPIInfo(title)
+//        mainView.resultLabel.attributedText = resultTitle()
     }
     
 }
@@ -133,7 +104,7 @@ extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 // MARK: - 레이아웃 및 속성 설정
 extension LotteryViewController {
 
-    func resultTitle() -> NSAttributedString {
+    func resultTitle(_ currentDraw: String) -> NSAttributedString {
         let title = currentDraw + " 당첨결과"
         let attributedString = NSMutableAttributedString(string: title)
         let stringLength = attributedString.length
@@ -143,7 +114,7 @@ extension LotteryViewController {
         return attributedString
     }
     
-    func configDrawNumsLabels() {
+    func configDrawNumsLabels(_ drawNumber: [String]) {
         for index in 0...7 {
             mainView.drawingNumsLabels[index].text = drawNumber[index]
             mainView.drawingNumsLabels[index].textColor = .white
@@ -159,7 +130,7 @@ extension LotteryViewController {
         mainView.drawingNumsLabels[6].font = .systemFont(ofSize: 20, weight: .semibold)
     }
     
-    func reloadBallColors() {
+    func reloadBallColors(_ drawNumber: [String]) {
         
         for index in 0...7 {
  
