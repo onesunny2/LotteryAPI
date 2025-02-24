@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import Alamofire
+import RxCocoa
+import RxSwift
 
 final class LotteryViewController: UIViewController {
     
@@ -26,7 +28,16 @@ final class LotteryViewController: UIViewController {
         
         view.backgroundColor = .white
         currentDraw = "1154회"
-        getAPIInfo("1154")
+//        getAPIInfo("1154")
+        
+        NetworkManager.shared.callRequest(type: Lottery.self, url: .lotto(drwNo: 1157)) { result in
+            switch result {
+            case .success(let success):
+                dump(success)
+            case .failure(let failure):
+                print(failure)
+            }
+        }
         
         configPicker()
 
