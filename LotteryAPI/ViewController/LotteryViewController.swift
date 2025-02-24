@@ -9,9 +9,6 @@ import UIKit
 import SnapKit
 import Alamofire
 
-// 🥺🥺🥺 어떤 때는 로또 공이 시작점부터 원형이고 어떤 때는 네모로 나오는데 뭔가 초기화 시점에 문제가 있는걸까요?
-// 네모로 빌드 시작되어도 회차 바꾸면 다시 원형이 되어서..
-
 class LotteryViewController: UIViewController {
     
     let lottoDrawTextfield = UITextField()
@@ -64,6 +61,12 @@ class LotteryViewController: UIViewController {
         drawStackView.arrangedSubviews.forEach {
             $0.layer.cornerRadius = $0.frame.width / 2
         }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        
+        view.endEditing(true)
     }
 
     func getAPIInfo(_ drwNo: String) {
