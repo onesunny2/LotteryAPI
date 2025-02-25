@@ -42,8 +42,7 @@ final class LotteryViewController: UIViewController {
             pickerIndexpath: mainView.lottoDrawPicker.rx.itemSelected,
             pickerTitle: mainView.lottoDrawPicker.rx.modelSelected(Int.self),
             tappedObservableBtn: mainView.observableButton.rx.tap,
-            tappedSingleBtn: mainView.singleButton.rx.tap,
-            currentTextfieldValue: mainView.lottoDrawTextfield.rx.text.orEmpty
+            tappedSingleBtn: mainView.singleButton.rx.tap
         )
         let output = viewModel.transform(input: input)
 

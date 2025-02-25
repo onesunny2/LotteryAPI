@@ -18,7 +18,6 @@ final class LotteryViewModel: BaseViewModel {
         let pickerTitle: ControlEvent<[Int]>
         let tappedObservableBtn: ControlEvent<Void>
         let tappedSingleBtn: ControlEvent<Void>
-        let currentTextfieldValue: ControlProperty<String>
     }
     
     struct Output {
@@ -69,16 +68,13 @@ final class LotteryViewModel: BaseViewModel {
         
         input.tappedObservableBtn
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .withLatestFrom(input.currentTextfieldValue)
-            .map {
-                guard let num = Int($0) else {
-                    return self.recentLottoCount()
-                }
-                return num
-            }
+            .withLatestFrom(input.pickerIndexpath)
+            .map { $0.component }
+            .withLatestFrom(input.pickerTitle) { $1[$0] }
             .flatMap {
                 NetworkManager.shared.callObservableRequest(type: Lottery.self, url: .lotto(drwNo: $0))
             }
+            .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, result in
                 lotteryList.accept(result.lotteryList)
                 drwNoDate.accept(result.drwNoDate)
@@ -88,16 +84,13 @@ final class LotteryViewModel: BaseViewModel {
         
         input.tappedSingleBtn
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .withLatestFrom(input.currentTextfieldValue)
-            .map {
-                guard let num = Int($0) else {
-                    return self.recentLottoCount()
-                }
-                return num
-            }
+            .withLatestFrom(input.pickerIndexpath)
+            .map { $0.component }
+            .withLatestFrom(input.pickerTitle) { $1[$0] }
             .flatMap {
                 NetworkManager.shared.callSingleRequest(type: Lottery.self, url: .lotto(drwNo: $0))
             }
+            .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, result in
                 lotteryList.accept(result.lotteryList)
                 drwNoDate.accept(result.drwNoDate)
