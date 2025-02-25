@@ -19,6 +19,8 @@ final class LotteryView: UIView, LotteryResult {
     var drawingNumsViews: [UIView] = []
     let lottoDrawPicker = UIPickerView()
     private let underlineUIView = UIView()
+    let observableButton = UIButton()
+    let singleButton = UIButton()
     
     private lazy var drawStackView = {
         let stackview = UIStackView()
@@ -46,7 +48,7 @@ final class LotteryView: UIView, LotteryResult {
     }
     
     func configHierarchy() {
-        [lottoDrawTextfield, subtitleLabel, lottoDateLabel, underlineUIView, resultLabel, drawStackView, bonusLabel].forEach {
+        [lottoDrawTextfield, subtitleLabel, lottoDateLabel, underlineUIView, resultLabel, drawStackView, bonusLabel, observableButton, singleButton].forEach {
             self.addSubview($0)
         }
         
@@ -107,6 +109,20 @@ final class LotteryView: UIView, LotteryResult {
             make.trailing.equalTo(self.safeAreaLayoutGuide).inset(27)
             make.top.equalTo(drawStackView.snp.bottom).offset(4)
         }
+        
+        observableButton.snp.makeConstraints { make in
+            make.top.equalTo(bonusLabel.snp.bottom).offset(30)
+            make.centerX.equalTo(self.safeAreaLayoutGuide)
+            make.width.equalTo(200)
+            make.height.equalTo(70)
+        }
+        
+        singleButton.snp.makeConstraints { make in
+            make.top.equalTo(observableButton.snp.bottom).offset(10)
+            make.centerX.equalTo(self.safeAreaLayoutGuide)
+            make.width.equalTo(200)
+            make.height.equalTo(70)
+        }
     }
     
     func configView() {
@@ -139,6 +155,20 @@ final class LotteryView: UIView, LotteryResult {
         bonusLabel.text = "보너스"
         bonusLabel.font = .systemFont(ofSize: 13, weight: .medium)
         bonusLabel.textColor = .gray
+        
+        let observableText = NSAttributedString(string: "Observable 조회", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .semibold)])
+        observableButton.setAttributedTitle(observableText, for: .normal)
+        observableButton.setTitleColor(.white, for: .normal)
+        observableButton.backgroundColor = .black
+        observableButton.layer.cornerRadius = 10
+        observableButton.clipsToBounds = true
+        
+        let singleText = NSAttributedString(string: "Single 조회", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .semibold)])
+        singleButton.setAttributedTitle(singleText, for: .normal)
+        singleButton.setTitleColor(.white, for: .normal)
+        singleButton.backgroundColor = .black
+        singleButton.layer.cornerRadius = 10
+        singleButton.clipsToBounds = true
     }
     
     @available(*, unavailable)
